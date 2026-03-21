@@ -324,6 +324,8 @@ class AgentState(TypedDict):
     vector_results: List[dict]
     final_results: List[dict]
     all_results: List[dict]
+    start_number: int
+    previous_text: str
     final_response: str
 
 
@@ -467,8 +469,8 @@ async def generate_final_response(state: AgentState) -> AgentState:
     if not raw_results:
         return {**state, "final_response": "No matching datasets found. Try a different search query."}
     
-    start_number = state.get("__start_number__", 1)
-    prev_text = state.get("__previous_text__", "")
+    start_number = state.get("start_number", 1)
+    prev_text = state.get("previous_text", "")
     print(f"Generating response for {len(raw_results)} final results, start={start_number}, intents={intents}")
     
     try:
@@ -553,8 +555,8 @@ class NeuroscienceAssistant:
                 "vector_results": [],
                 "final_results": [],
                 "all_results": [],
-                "__start_number__": 1,
-                "__previous_text__": "",
+                "start_number": 1,
+                "previous_text": "",
                 "final_response": "",
             }
             final_state = await self.graph.ainvoke(initial_state)
@@ -578,4 +580,4 @@ class NeuroscienceAssistant:
             print(f"Error in handle_chat: {e}")
             import traceback
             traceback.print_exc()
-            return f"Error: {e}"
+            return "I encountered an error. Please try again."
