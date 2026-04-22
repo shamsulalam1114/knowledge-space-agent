@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import patch, AsyncMock
 
 def test_root_endpoint(test_client):
